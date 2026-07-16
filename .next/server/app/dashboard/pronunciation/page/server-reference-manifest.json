@@ -1,0 +1,16 @@
+{
+  "node": {
+    "40eadc86c86ba7956f5d9a547d920cbabc4148c42e": {
+      "workers": {
+        "app/dashboard/pronunciation/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/pronunciation/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/pronunciation-feedback.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/pronunciation/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

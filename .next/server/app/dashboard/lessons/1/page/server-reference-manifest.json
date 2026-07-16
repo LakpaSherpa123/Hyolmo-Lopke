@@ -1,0 +1,16 @@
+{
+  "node": {
+    "401d977d609bd897a580e0b9a32014751304efe2f2": {
+      "workers": {
+        "app/dashboard/lessons/1/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/lessons/1/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/lessons/1/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}
