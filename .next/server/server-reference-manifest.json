@@ -1,5 +1,44 @@
 {
-  "node": {},
+  "node": {
+    "401d977d609bd897a580e0b9a32014751304efe2f2": {
+      "workers": {
+        "app/dashboard/alphabets/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/alphabets/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/drawing-feedback.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/dashboard/lessons/2/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/lessons/2/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/alphabets/page": "action-browser",
+        "app/dashboard/lessons/2/page": "action-browser"
+      }
+    },
+    "40eadc86c86ba7956f5d9a547d920cbabc4148c42e": {
+      "workers": {
+        "app/dashboard/pronunciation/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/pronunciation/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/pronunciation-feedback.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/pronunciation/page": "action-browser"
+      }
+    },
+    "40faa50121ed8cf212a7977f6dd1dbe340f9d1bc8d": {
+      "workers": {
+        "app/dashboard/alphabets/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/alphabets/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/drawing-feedback.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/alphabets/page": "action-browser"
+      }
+    }
+  },
   "edge": {},
   "encryptionKey": "15lt749gn8DItRNO6m0y+DMxZxifQyESwQ9IPWye9dU="
 }
