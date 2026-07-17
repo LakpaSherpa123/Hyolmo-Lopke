@@ -10,6 +10,9 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,16 +33,23 @@ import {
   Mic,
   MoreVertical,
   Settings,
+  Languages,
+  Award,
+  PlusCircle,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-
 export const navItems = [
-  { href: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
+  { href: '/dashboard', icon: LayoutGrid, label: 'Home' },
+  { href: '/dashboard/lessons', icon: GraduationCap, label: 'Learning Path' },
   { href: '/dashboard/alphabets', icon: BookText, label: 'Alphabets' },
-  { href: '/dashboard/lessons', icon: GraduationCap, label: 'Lessons' },
-  { href: '/dashboard/pronunciation', icon: Mic, label: 'Pronunciation' },
+  { href: '/dashboard/pronunciation', icon: Mic, label: 'AI Tutor' },
+];
+
+export const contributorItems = [
+  { href: '/contributor/dashboard', icon: Award, label: 'My Impact' },
+  { href: '/contributor/translate', icon: PlusCircle, label: 'Add Translation' },
 ];
 
 export function AppSidebar() {
@@ -62,23 +72,51 @@ export function AppSidebar() {
         <Logo isCollapsed={isCollapsed} />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname.startsWith(item.href) && (item.href === '/dashboard' ? pathname === item.href : true)}
-                tooltip={item.label}
-                className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
-              >
-                <Link href={item.href}>
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+        <SidebarGroup>
+          <SidebarGroupLabel>Learner</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))}
+                    tooltip={item.label}
+                    className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground"
+                  >
+                    <Link href={item.href}>
+                      <item.icon className="w-5 h-5" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Contributor</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {contributorItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith(item.href)}
+                    tooltip={item.label}
+                    className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
+                  >
+                    <Link href={item.href}>
+                      <item.icon className="w-5 h-5" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-4">
         <div
@@ -87,7 +125,7 @@ export function AppSidebar() {
           }`}
         >
           <Avatar className="size-8">
-            <AvatarImage src="https://picsum.photos/100" data-ai-hint="sherpa person" />
+            <AvatarImage src="https://picsum.photos/seed/tenzing/100" data-ai-hint="sherpa person" />
             <AvatarFallback>TN</AvatarFallback>
           </Avatar>
           {!isCollapsed && (
@@ -96,7 +134,7 @@ export function AppSidebar() {
                 Tenzing Norgay
               </p>
               <p className="truncate text-xs text-sidebar-foreground/70">
-                tenzing@sherpa.com
+                Learner & Contributor
               </p>
             </div>
           )}
