@@ -1,20 +1,44 @@
+
 "use client";
 
 import { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Volume2, ArrowRight, Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Volume2, ArrowRight, Loader2, Info } from "lucide-react";
 import Link from 'next/link';
+import Image from 'next/image';
 import { getSpokenText } from '@/ai/flows/text-to-speech';
 import { useToast } from '@/hooks/use-toast';
 
 const vocabulary = [
-  { sherpa: "བཀྲ་ཤིས་བདེ་ལེགས", english: "Tashi delek (Hello / Greetings)", pronunciation: "tah-shee deh-lek" },
-  { sherpa: "ཐུགས་རྗེ་ཆེ་", english: "Thuk-je-che (Thank you)", pronunciation: "thook-jay-chay" },
-  { sherpa: "ཁམས་བཟང་།", english: "Kham-sang? (How are you?)", pronunciation: "khahm-sahng" },
-  { sherpa: "བདེ་ལེགས་", english: "De-lek (Goodbye (informal))", pronunciation: "deh-lek" },
-  { sherpa: "ལགས་སོ།", english: "La-so (Yes)", pronunciation: "lah-so" },
-  { sherpa: "མེད་ལེ།", english: "Me-le (No)", pronunciation: "meh-lay" },
+  { 
+    sherpa: "བཀྲ་ཤིས་བདེ་ལེགས", 
+    english: "Hello / Greetings", 
+    pronunciation: "tah-shee deh-lek",
+    hint: "greeting people",
+    image: "https://picsum.photos/seed/greet/400/300" 
+  },
+  { 
+    sherpa: "ཐུགས་རྗེ་ཆེ་", 
+    english: "Thank you", 
+    pronunciation: "thook-jay-chay",
+    hint: "gratitude heart",
+    image: "https://picsum.photos/seed/thanks/400/300"
+  },
+  { 
+    sherpa: "ཁམས་བཟང་།", 
+    english: "How are you?", 
+    pronunciation: "khahm-sahng",
+    hint: "conversation face",
+    image: "https://picsum.photos/seed/status/400/300"
+  },
+  { 
+    sherpa: "བདེ་ལེགས་", 
+    english: "Goodbye", 
+    pronunciation: "deh-lek",
+    hint: "waving hand",
+    image: "https://picsum.photos/seed/bye/400/300"
+  },
 ];
 
 export default function LessonOnePage() {
@@ -49,42 +73,59 @@ export default function LessonOnePage() {
   };
 
   return (
-    <div className="flex-1 space-y-8 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between">
+    <div className="flex-1 space-y-8 p-4 md:p-8 pt-6 max-w-5xl mx-auto pb-20">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">Lesson 1: Basic Greetings</h1>
-          <p className="text-muted-foreground">Learn essential phrases for everyday conversations.</p>
+          <h1 className="text-3xl font-bold tracking-tight font-headline">Tier 1: Survival Phrases</h1>
+          <p className="text-muted-foreground">Focus on phonetic recognition and basic social interaction.</p>
         </div>
-        <Button asChild>
+        <Button asChild size="lg" className="shadow-lg">
             <Link href="/dashboard/lessons/1/quiz">
-                Practice with a Quiz
+                Start Lesson Quiz
                 <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Vocabulary</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {vocabulary.map((item, index) => (
-            <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-secondary/50">
-              <div>
-                <p className="text-2xl font-semibold">{item.sherpa}</p>
-                <p className="text-sm text-muted-foreground">{item.english} <span className="italic">({item.pronunciation})</span></p>
-              </div>
-              <Button variant="outline" size="icon" onClick={() => handlePlaySound(item.sherpa)} disabled={!!loadingAudio}>
-                {loadingAudio === item.sherpa ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                    <Volume2 className="h-5 w-5" />
-                )}
-              </Button>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+        {vocabulary.map((item, index) => (
+          <Card key={index} className="overflow-hidden group hover:shadow-xl transition-all border-2 hover:border-primary">
+            <div className="relative h-48 w-full overflow-hidden">
+                <Image 
+                    src={item.image} 
+                    alt={item.english} 
+                    fill 
+                    className="object-cover transition-transform group-hover:scale-105"
+                    data-ai-hint={item.hint}
+                />
+                <div className="absolute inset-0 bg-black/20" />
             </div>
-          ))}
-        </CardContent>
-      </Card>
+            <CardHeader className="space-y-1">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-3xl font-bold">{item.sherpa}</CardTitle>
+                <Button variant="secondary" size="icon" className="rounded-full shadow-md" onClick={() => handlePlaySound(item.sherpa)} disabled={!!loadingAudio}>
+                    {loadingAudio === item.sherpa ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                        <Volume2 className="h-5 w-5" />
+                    )}
+                </Button>
+              </div>
+              <CardDescription className="text-lg font-medium text-primary uppercase tracking-tight">
+                {item.english}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="p-3 bg-secondary/50 rounded-lg border border-border">
+                <p className="text-sm font-semibold flex items-center gap-2">
+                    <Info className="h-4 w-4 text-blue-500" />
+                    Pronunciation: <span className="italic text-foreground">"{item.pronunciation}"</span>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
       
       {audioUrl && (
         <audio ref={audioRef} hidden>
