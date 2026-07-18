@@ -3,135 +3,136 @@
 
 import { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Volume2, ArrowRight, Loader2, Info } from "lucide-react";
-import Link from 'next/link';
 import Image from 'next/image';
 import { getSpokenText } from '@/ai/flows/text-to-speech';
 import { useToast } from '@/hooks/use-toast';
+import { LessonNavigation } from '@/components/lessons/LessonNavigation';
+import { TriScriptBlock } from '@/components/lessons/TriScriptBlock';
 
 const vocabulary = [
   { 
-    sherpa: "བཀྲ་ཤིས་བདེ་ལེགས", 
+    tibetan: "བཀྲ་ཤིས་བདེ་ལེགས", 
+    devanagari: "ताशी देलेक",
+    romanized: "tah-shee deh-lek",
     english: "Hello / Greetings", 
-    pronunciation: "tah-shee deh-lek",
     hint: "greeting people",
     image: "https://picsum.photos/seed/greet/400/300" 
   },
   { 
-    sherpa: "ཐུགས་རྗེ་ཆེ་", 
+    tibetan: "ཐུགས་རྗེ་ཆེ་", 
+    devanagari: "थुग जे छे",
+    romanized: "thook-jay-chay",
     english: "Thank you", 
-    pronunciation: "thook-jay-chay",
     hint: "gratitude heart",
     image: "https://picsum.photos/seed/thanks/400/300"
   },
   { 
-    sherpa: "ཁམས་བཟང་།", 
+    tibetan: "ཁམས་བཟང་།", 
+    devanagari: "खाम साङ",
+    romanized: "khahm-sahng",
     english: "How are you?", 
-    pronunciation: "khahm-sahng",
     hint: "conversation face",
     image: "https://picsum.photos/seed/status/400/300"
   },
   { 
-    sherpa: "བདེ་ལེགས་", 
+    tibetan: "བདེ་ལེགས་", 
+    devanagari: "देलेक",
+    romanized: "deh-lek",
     english: "Goodbye", 
-    pronunciation: "deh-lek",
     hint: "waving hand",
     image: "https://picsum.photos/seed/bye/400/300"
   },
 ];
 
 export default function LessonOnePage() {
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [showRomanized, setShowRomanized] = useState(true);
   const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   const handlePlaySound = async (text: string) => {
     if (loadingAudio) return;
-
     setLoadingAudio(text);
-    setAudioUrl(null);
-
     try {
       const result = await getSpokenText(text);
       if (result.media) {
         setAudioUrl(result.media);
-        audioRef.current?.load();
-        audioRef.current?.play();
+        setTimeout(() => audioRef.current?.play(), 100);
       }
     } catch (error) {
-      console.error("Error generating audio:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Could not generate audio. Please try again.",
-      });
+      toast({ variant: "destructive", title: "Error", description: "Could not generate audio." });
     } finally {
       setLoadingAudio(null);
     }
   };
 
   return (
-    <div className="flex-1 space-y-8 p-4 md:p-8 pt-6 max-w-5xl mx-auto pb-20">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">Tier 1: Survival Phrases</h1>
-          <p className="text-muted-foreground">Focus on phonetic recognition and basic social interaction.</p>
-        </div>
-        <Button asChild size="lg" className="shadow-lg">
-            <Link href="/dashboard/lessons/1/quiz">
-                Start Lesson Quiz
-                <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-        </Button>
-      </div>
+    <div className="min-h-screen bg-secondary/30 pb-24">
+      <LessonNavigation 
+        title="Tier 1: Survival Phrases" 
+        progress={25} 
+        showRomanized={showRomanized} 
+        onToggleRomanized={() => setShowRomanized(!showRomanized)} 
+      />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-        {vocabulary.map((item, index) => (
-          <Card key={index} className="overflow-hidden group hover:shadow-xl transition-all border-2 hover:border-primary">
-            <div className="relative h-48 w-full overflow-hidden">
+      <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 mt-4">
+        <div className="bg-blue-50 border-2 border-blue-200 p-6 rounded-3xl flex gap-4 items-start text-blue-800">
+          <Info className="h-6 w-6 shrink-0 mt-1" />
+          <div className="space-y-1">
+            <h4 className="font-bold text-lg italic">Rule of Three: Familiarity</h4>
+            <p className="text-sm">Tap each card to hear the pronunciation. Try to memorize the script shapes before hiding the romanization.</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {vocabulary.map((item, index) => (
+            <Card key={index} className="overflow-hidden border-2 rounded-3xl group transition-all hover:border-primary shadow-lg">
+              <div className="relative h-56 w-full">
                 <Image 
-                    src={item.image} 
-                    alt={item.english} 
-                    fill 
-                    className="object-cover transition-transform group-hover:scale-105"
-                    data-ai-hint={item.hint}
+                  src={item.image} 
+                  alt={item.english} 
+                  fill 
+                  className="object-cover"
+                  data-ai-hint={item.hint}
                 />
-                <div className="absolute inset-0 bg-black/20" />
-            </div>
-            <CardHeader className="space-y-1">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-3xl font-bold">{item.sherpa}</CardTitle>
-                <Button variant="secondary" size="icon" className="rounded-full shadow-md" onClick={() => handlePlaySound(item.sherpa)} disabled={!!loadingAudio}>
-                    {loadingAudio === item.sherpa ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                        <Volume2 className="h-5 w-5" />
-                    )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <p className="text-white font-bold text-xl drop-shadow-md">{item.english}</p>
+                </div>
+              </div>
+              <CardContent className="p-6 flex items-center justify-between gap-4">
+                <TriScriptBlock 
+                  tibetan={item.tibetan}
+                  devanagari={item.devanagari}
+                  romanized={item.romanized}
+                  showRomanized={showRomanized}
+                  className="flex-1"
+                  variant="ghost"
+                />
+                <Button 
+                  size="icon" 
+                  className="h-16 w-16 rounded-2xl shadow-xl active:scale-95 transition-transform" 
+                  onClick={() => handlePlaySound(item.tibetan)}
+                  disabled={!!loadingAudio}
+                >
+                  {loadingAudio === item.tibetan ? <Loader2 className="animate-spin" /> : <Volume2 className="h-8 w-8" />}
                 </Button>
-              </div>
-              <CardDescription className="text-lg font-medium text-primary uppercase tracking-tight">
-                {item.english}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="p-3 bg-secondary/50 rounded-lg border border-border">
-                <p className="text-sm font-semibold flex items-center gap-2">
-                    <Info className="h-4 w-4 text-blue-500" />
-                    Pronunciation: <span className="italic text-foreground">"{item.pronunciation}"</span>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="flex justify-center pt-8">
+          <Button size="lg" className="h-14 px-12 rounded-2xl text-lg font-bold shadow-xl border-b-4 border-primary-foreground/20">
+            Next Level Quiz <ArrowRight className="ml-2" />
+          </Button>
+        </div>
       </div>
       
-      {audioUrl && (
-        <audio ref={audioRef} hidden>
-          <source src={audioUrl} type="audio/wav" />
-        </audio>
-      )}
+      {audioUrl && <audio ref={audioRef} src={audioUrl} hidden />}
     </div>
   );
 }

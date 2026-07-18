@@ -3,123 +3,130 @@
 
 import { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Volume2, ArrowRight, Loader2, HelpCircle, Layers } from "lucide-react";
-import Link from 'next/link';
+import { Card, CardContent } from "@/components/ui/card";
+import { Volume2, ArrowRight, Loader2, Turtle, Rabbit, Layers } from "lucide-react";
 import { getSpokenText } from '@/ai/flows/text-to-speech';
 import { useToast } from '@/hooks/use-toast';
+import { LessonNavigation } from '@/components/lessons/LessonNavigation';
+import { TriScriptBlock } from '@/components/lessons/TriScriptBlock';
 import { Badge } from '@/components/ui/badge';
 
 const vocabulary = [
-  { sherpa: "ཁྱེད་ཀྱི་མིང་ལ་ག་རེ་ཡིན།", english: "What is your name?", pronunciation: "khyeh-kee meeng-la kah-ray" },
-  { sherpa: "ངའི་མིང་ལ་ ... ཡིན།", english: "My name is ...", pronunciation: "ngee meeng-la ... yeen" },
-  { sherpa: "ཁྱེད་རང་ག་ནས་ཡིན་པ།", english: "Where are you from?", pronunciation: "khyeh-rahng-la khahng-nay yeen" },
-  { sherpa: "ང་ ... ནས་ཡིན།", english: "I am from ...", pronunciation: "ngah ... nay yeen" },
-  { sherpa: "ཁྱེད་རང་ལ་མཇལ་བ་དགའ་པོ་བྱུང་།", english: "Nice to meet you", pronunciation: "khyeh-rahng-la nyer-pa-la gah-po joong" },
+  { 
+    tibetan: "ཁྱེད་ཀྱི་མིང་ལ་ག་རེ་ཡིན།", 
+    devanagari: "ख्येगी मिङला कारे यीन?",
+    romanized: "khyeh-kee meeng-la kah-ray",
+    english: "What is your name?" 
+  },
+  { 
+    tibetan: "ངའི་མིང་ལ་ ... ཡིན།", 
+    devanagari: "ङे मिङला ... यीन",
+    romanized: "ngee meeng-la ... yeen",
+    english: "My name is ..." 
+  },
 ];
 
 export default function LessonTwoPage() {
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
+  const [showRomanized, setShowRomanized] = useState(true);
   const [slowMotion, setSlowMotion] = useState(false);
+  const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   const handlePlaySound = async (text: string) => {
     if (loadingAudio) return;
-
     setLoadingAudio(text);
-    setAudioUrl(null);
-
     try {
       const result = await getSpokenText(text.replace('...', ''));
       if (result.media) {
         setAudioUrl(result.media);
         if (audioRef.current) {
-            audioRef.current.playbackRate = slowMotion ? 0.6 : 1.0;
-            audioRef.current.load();
-            audioRef.current.play();
+          audioRef.current.playbackRate = slowMotion ? 0.5 : 1.0;
+          setTimeout(() => audioRef.current?.play(), 100);
         }
       }
     } catch (error) {
-      console.error("Error generating audio:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Could not generate audio. Please try again.",
-      });
+      toast({ variant: "destructive", title: "Error", description: "Could not generate audio." });
     } finally {
       setLoadingAudio(null);
     }
   };
 
   return (
-    <div className="flex-1 space-y-8 p-4 md:p-8 pt-6 max-w-4xl mx-auto pb-20">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <Badge variant="secondary" className="mb-2">Tier 2: Novice</Badge>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">Lesson 2: Self Intro</h1>
-          <p className="text-muted-foreground">Transitioning from words to simple SOV connections.</p>
+    <div className="min-h-screen bg-secondary/30 pb-24">
+      <LessonNavigation 
+        title="Tier 2: Self Intro" 
+        progress={10} 
+        showRomanized={showRomanized} 
+        onToggleRomanized={() => setShowRomanized(!showRomanized)} 
+      />
+
+      <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 mt-4">
+        <div className="bg-green-50 border-2 border-green-200 p-6 rounded-3xl flex gap-4 items-start text-green-800 shadow-sm">
+          <Layers className="h-6 w-6 shrink-0 mt-1" />
+          <div className="space-y-1">
+            <h4 className="font-bold text-lg">Tier 2 Transition: SOV Syntax</h4>
+            <p className="text-sm">Notice the Subject-Object-Verb order. Use the Snail Toggle to hear specific tonal drops.</p>
+          </div>
         </div>
-        <Button asChild>
-            <Link href="/dashboard/lessons/2/quiz">
-                Practice with Quiz
-                <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-        </Button>
-      </div>
 
-      <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl flex gap-3 text-blue-800 text-sm">
-        <Layers className="h-5 w-5 shrink-0" />
-        <p><strong>Tier 2 Concept:</strong> Notice how Sherpa sentences often place the verb at the end (Subject-Object-Verb). Practice dragging the word chips in your mind before listening.</p>
-      </div>
-
-      <div className="flex justify-end items-center gap-2 px-2">
-        <span className="text-xs font-bold uppercase text-muted-foreground">Slow Motion Mode</span>
-        <Button 
+        <div className="flex justify-center mb-4">
+          <Button 
             variant={slowMotion ? "default" : "outline"} 
-            size="sm" 
-            className="rounded-full h-8 px-4"
             onClick={() => setSlowMotion(!slowMotion)}
-        >
-            {slowMotion ? "🐢 Slow (0.6x)" : "🐇 Normal"}
-        </Button>
-      </div>
+            className="rounded-full gap-2 border-2 px-6 h-12 shadow-md transition-all active:scale-95"
+          >
+            {slowMotion ? <Turtle className="h-5 w-5" /> : <Rabbit className="h-5 w-5" />}
+            <span className="font-bold">{slowMotion ? "Slow (0.5x)" : "Normal Speed"}</span>
+          </Button>
+        </div>
 
-      <div className="space-y-4">
-        {vocabulary.map((item, index) => (
-          <Card key={index} className="group hover:border-primary transition-colors">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div className="space-y-2">
-                <p className="text-2xl font-bold font-headline">{item.sherpa}</p>
-                <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="text-xs">{item.english}</Badge>
-                    <span className="text-xs text-muted-foreground italic">({item.pronunciation})</span>
+        <div className="space-y-6">
+          {vocabulary.map((item, index) => (
+            <Card key={index} className="border-2 rounded-3xl shadow-lg transition-all hover:border-primary overflow-hidden">
+              <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="flex-1 w-full space-y-4">
+                  <Badge className="bg-primary/10 text-primary border-primary/20">{item.english}</Badge>
+                  <TriScriptBlock 
+                    tibetan={item.tibetan}
+                    devanagari={item.devanagari}
+                    romanized={item.romanized}
+                    showRomanized={showRomanized}
+                    className="w-full text-left items-start"
+                    variant="ghost"
+                  />
                 </div>
-              </div>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="h-12 w-12 rounded-full border-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all" 
-                onClick={() => handlePlaySound(item.sherpa)} 
-                disabled={!!loadingAudio}
-              >
-                {loadingAudio === item.sherpa ? (
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                ) : (
-                    <Volume2 className="h-6 w-6" />
-                )}
+                <Button 
+                  size="icon" 
+                  className="h-20 w-20 rounded-full shadow-xl active:scale-95 transition-transform" 
+                  onClick={() => handlePlaySound(item.tibetan)}
+                  disabled={!!loadingAudio}
+                >
+                  {loadingAudio === item.tibetan ? <Loader2 className="animate-spin" /> : <Volume2 className="h-10 w-10" />}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="flex flex-col items-center pt-12 space-y-4">
+          <div className="flex flex-wrap justify-center gap-3">
+            {["ངའི་", "མིང་ལ་", "བཀྲ་ཤིས་", "ཡིན།"].map((chip) => (
+              <Button key={chip} variant="outline" className="h-14 px-6 rounded-2xl border-2 font-headline text-xl shadow-md border-b-4">
+                {chip}
               </Button>
-            </CardContent>
-          </Card>
-        ))}
+            ))}
+          </div>
+          <p className="text-sm text-muted-foreground font-medium italic">Drag word chips into correct SOV order (Word Bank Intro)</p>
+          
+          <Button size="lg" className="h-14 px-12 rounded-2xl text-lg font-bold shadow-xl border-b-4 mt-8">
+            Check Translation <ArrowRight className="ml-2" />
+          </Button>
+        </div>
       </div>
       
-      {audioUrl && (
-        <audio ref={audioRef} hidden>
-          <source src={audioUrl} type="audio/wav" />
-        </audio>
-      )}
+      {audioUrl && <audio ref={audioRef} src={audioUrl} hidden />}
     </div>
   );
 }
