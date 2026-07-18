@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -22,14 +21,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldCheck } from "lucide-react";
 
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
+  email: z.string().min(1, {
+    message: "Please enter your email or username.",
   }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
+  password: z.string().min(4, {
+    message: "Password must be at least 4 characters.",
   }),
 });
 
@@ -48,8 +47,21 @@ export function SignInForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
+
+    // Hardcoded bypass for the requested test account
+    if (values.email.toLowerCase() === "test" && values.password === "test") {
+      toast({
+        title: "Demo Mode Active",
+        description: "Logged in with test credentials.",
+      });
+      router.push("/dashboard");
+      return;
+    }
+
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+      // Ensure it's an email format for Firebase
+      const email = values.email.includes("@") ? values.email : `${values.email}@example.com`;
+      await signInWithEmailAndPassword(auth, email, values.password);
       router.push("/dashboard");
     } catch (error: any) {
       let errorMessage = "An unexpected error occurred. Please try again.";
@@ -75,13 +87,19 @@ export function SignInForm() {
     }
   }
 
+  const handleDemoLogin = () => {
+    form.setValue("email", "test");
+    form.setValue("password", "test");
+    form.handleSubmit(onSubmit)();
+  };
+
   return (
-    <Card>
+    <Card className="border-2 shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl">Welcome Back!</CardTitle>
+        <CardTitle className="text-2xl font-bold">Welcome Back!</CardTitle>
         <CardDescription>Sign in to continue your journey with Hyolmo Lopke.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -89,9 +107,9 @@ export function SignInForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Email or Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder="test or name@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -110,15 +128,28 @@ export function SignInForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
-            </Button>
+            <div className="space-y-3">
+                <Button type="submit" className="w-full h-11" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Sign In
+                </Button>
+                
+                <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="w-full h-11 border-dashed" 
+                    onClick={handleDemoLogin}
+                    disabled={isLoading}
+                >
+                    <ShieldCheck className="mr-2 h-4 w-4" />
+                    Quick Demo Login (test/test)
+                </Button>
+            </div>
           </form>
         </Form>
-        <div className="mt-4 text-center text-sm">
+        <div className="mt-4 text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="underline text-accent">
+          <Link href="/signup" className="underline font-bold text-primary hover:text-primary/80">
             Sign up
           </Link>
         </div>
