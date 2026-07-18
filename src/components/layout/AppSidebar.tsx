@@ -36,6 +36,7 @@ import {
   Languages,
   Award,
   PlusCircle,
+  ShieldCheck,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -49,7 +50,8 @@ export const navItems = [
 
 export const contributorItems = [
   { href: '/contributor/dashboard', icon: Award, label: 'My Impact' },
-  { href: '/contributor/translate', icon: PlusCircle, label: 'Add Translation' },
+  { href: '/contributor/translate', icon: PlusCircle, label: 'Workbench' },
+  { href: '/contributor/review', icon: ShieldCheck, label: 'Review Queue' },
 ];
 
 export function AppSidebar() {
